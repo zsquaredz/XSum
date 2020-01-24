@@ -64,8 +64,8 @@ def write_to_bin(data_type, out_file_rb, out_file_fs):
       print("Writing story %i of %i; %.2f percent done" % (idx, num_stories, float(idx)*100.0/float(num_stories)))
 
     # Files
-    restbodyfile = bbc_tokenized_stories_dir + "/document/" + s + ".document"
-    firstsentencefile = bbc_tokenized_stories_dir + "/summary/" + s + ".summary"
+    restbodyfile = bbc_tokenized_stories_dir + "/restbody/" + s + ".restbody"
+    firstsentencefile = bbc_tokenized_stories_dir + "/firstsentence/" + s + ".fs"
     
             
     # Get the strings to write to .bin file
