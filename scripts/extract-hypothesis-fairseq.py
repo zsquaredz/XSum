@@ -21,7 +21,7 @@ if __name__ == '__main__':
             hyp_dict[sentid] = hyp
     print(len(hyp_dict))
 
-    sentids = hyp_dict.keys()
+    sentids = list(hyp_dict.keys())
     sentids.sort()
     
     with io.open(args.f, "w", encoding="utf-8") as f_hyp:
