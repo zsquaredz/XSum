@@ -6,12 +6,12 @@ dm_single_close_quote = u'\u2019' # unicode
 dm_double_close_quote = u'\u201d'
 END_TOKENS = ['.', '!', '?', '...', "'", "`", '"', dm_single_close_quote, dm_double_close_quote, ")"] # acceptable ways to end a sentence
 
-bbc_tokenized_stories_dir = "./XSum-Dataset/xsum-preprocessed"
+bbc_tokenized_stories_dir = "/disk/ocean/public/corpora/XSum/bbc-tokenized-segmented-final/"
 
 finished_files_dir = "./data-topic-convs2s"
 
 # Load JSON File : training, dev and test splits.
-with open("./XSum-Dataset/XSum-TRAINING-DEV-TEST-SPLIT-90-5-5.json") as json_data:
+with open("../XSum-Dataset/XSum-TRAINING-DEV-TEST-SPLIT-90-5-5.json") as json_data:
   train_dev_test_dict = json.load(json_data)
 
 lda_word_topics = "./XSum-Dataset/lda-train-document-lemma-topic-512-iter-1000/word_term_topics.log"
@@ -48,8 +48,8 @@ def get_data_from_file(story_file):
 def get_doctopic_data_from_file(doctopicfile, topic_list):
   lines = read_text_file(doctopicfile)
   if len(lines) != 512:
-    print doctopicfile
-    print "Not all topics given prob."
+    print(doctopicfile)
+    print("Not all topics given prob.")
     exit(0)
   data = []
   for line in lines:
@@ -60,7 +60,7 @@ def get_doctopic_data_from_file(doctopicfile, topic_list):
 def write_to_bin(data_type, out_file_rb, out_file_fs, out_file_doctopics, out_file_document_lemma, word_topic_dict_final, topic_list):
   
   """Reads all the bbids and write them to out file."""
-  print "Making text file for bibids listed as %s..." % data_type
+  print("Making text file for bibids listed as %s..." % data_type)
   
   bbcids = train_dev_test_dict[data_type]
   num_stories = len(bbcids)
@@ -73,7 +73,7 @@ def write_to_bin(data_type, out_file_rb, out_file_fs, out_file_doctopics, out_fi
   for idx,s in enumerate(bbcids):
     
     if idx % 1000 == 0:
-      print "Writing story %i of %i; %.2f percent done" % (idx, num_stories, float(idx)*100.0/float(num_stories))
+      print("Writing story %i of %i; %.2f percent done" % (idx, num_stories, float(idx)*100.0/float(num_stories)))
 
     # Files
     documentfile = bbc_tokenized_stories_dir + "/document/" + s + ".document"
@@ -90,8 +90,8 @@ def write_to_bin(data_type, out_file_rb, out_file_fs, out_file_doctopics, out_fi
     article_lemma_list = article_lemma.strip().split()
 
     if len(article_word_list) != len(article_lemma_list ):
-      print idx, s
-      print "Word count and lemma count did not match."
+      print(idx, s)
+      print("Word count and lemma count did not match.")
       exit(0)
 
     article = article_word_list[:400]
@@ -123,7 +123,7 @@ def write_to_bin(data_type, out_file_rb, out_file_fs, out_file_doctopics, out_fi
   doctopics_foutput.close()
   document_lemma_foutput.close()
   
-  print "Finished writing file:\n%s\n%s\n%s\n%s\n" %(out_file_rb, out_file_fs, out_file_doctopics, out_file_document_lemma)
+  print("Finished writing file:\n%s\n%s\n%s\n%s\n" %(out_file_rb, out_file_fs, out_file_doctopics, out_file_document_lemma))
 
 if __name__ == '__main__':
 
@@ -131,7 +131,7 @@ if __name__ == '__main__':
   if not os.path.exists(finished_files_dir): os.makedirs(finished_files_dir)
 
   # Read word_topic vector
-  print "Reading word_topic vector"
+  print("Reading word_topic vector")
   word_topic_dict = {}
   wordid_word_dict = {}
   
@@ -152,7 +152,7 @@ if __name__ == '__main__':
           if float(topic_prob_data[1]) < min_word_topic_prob:
             min_word_topic_prob = float(topic_prob_data[1])
             
-  print "min_word_topic_prob: "+str(min_word_topic_prob)
+  print("min_word_topic_prob: "+str(min_word_topic_prob))
   str_min_word_topic_prob = str(min_word_topic_prob)
 
   topic_list = [str(i) for i in range(512)]

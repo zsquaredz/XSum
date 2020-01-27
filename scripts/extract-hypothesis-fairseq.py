@@ -19,7 +19,7 @@ if __name__ == '__main__':
             sentid = int(words[0].split("-")[1])
             hyp = " ".join(words[2:])
             hyp_dict[sentid] = hyp
-    print len(hyp_dict)
+    print(len(hyp_dict))
 
     sentids = hyp_dict.keys()
     sentids.sort()
