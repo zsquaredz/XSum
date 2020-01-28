@@ -30,7 +30,7 @@ if __name__ == '__main__':
     with io.open(args.f, "w", encoding="utf-8") as f_hyp:
         for sentid in sentids:
             # f_hyp.write(hyp_dict[sentid]+"\n")
-            # assert len(hypos_dict[sentid]) == 10
+            assert len(hypos_dict[sentid]) == 10
             for hyp in hypos_dict[sentid]:
                 f_hyp.write(hyp+'\n')
             
