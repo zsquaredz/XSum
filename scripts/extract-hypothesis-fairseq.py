@@ -2,6 +2,7 @@
 import argparse
 import os
 import io
+from collections import defaultdict
 
 if __name__ == '__main__':
 
@@ -13,12 +14,14 @@ if __name__ == '__main__':
     f_output_data = io.open(args.o, encoding="utf-8").readlines()    
 
     hyp_dict = {}
+    hypos_dict = defaultdict(list)
     for line in f_output_data:
         if line.startswith("H-"):
             words = line.split()
             sentid = int(words[0].split("-")[1])
             hyp = " ".join(words[2:])
             hyp_dict[sentid] = hyp
+            hypos_dict[sentid].append(hyp)
     print(len(hyp_dict))
 
     sentids = list(hyp_dict.keys())
@@ -26,5 +29,8 @@ if __name__ == '__main__':
     
     with io.open(args.f, "w", encoding="utf-8") as f_hyp:
         for sentid in sentids:
-            f_hyp.write(hyp_dict[sentid]+"\n")
+            # f_hyp.write(hyp_dict[sentid]+"\n")
+            assert len(hypos_dict[sentid]) == 10
+            for hyp in hypos_dict[sentid]:
+                f_hyp.write(hyp+'\n')
             
