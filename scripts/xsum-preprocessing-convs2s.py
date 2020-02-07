@@ -178,6 +178,6 @@ if __name__ == '__main__':
 
   # Read the tokenized stories, do a little postprocessing then write to text files
   write_to_bin_anonymized("test", os.path.join(finished_files_dir, "test.anonymized.document"), os.path.join(finished_files_dir, "test.anonymized.summary"))
-  # write_to_bin_anonymized("validation", os.path.join(finished_files_dir, "validation.anonymized.document"), os.path.join(finished_files_dir, "validation.anonymized.summary"))
-  # write_to_bin_anonymized("train", os.path.join(finished_files_dir, "train.anonymized.document"), os.path.join(finished_files_dir, "train.anonymized.summary"))
+  write_to_bin_anonymized("validation", os.path.join(finished_files_dir, "validation.anonymized.document"), os.path.join(finished_files_dir, "validation.anonymized.summary"))
+  write_to_bin_anonymized("train", os.path.join(finished_files_dir, "train.anonymized.document"), os.path.join(finished_files_dir, "train.anonymized.summary"))
 	
