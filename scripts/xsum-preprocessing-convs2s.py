@@ -54,9 +54,10 @@ def get_data_from_file(story_file):
 
 def get_article_summary_from_file_and_anonymize(articlefile, summaryfile):
     entityDict = {} # {'@entity1':'Apple'}
+    entityDict_rev = {} # {'Apple':'@entity1'}
     entitySet = set()
-    entityIdx_article = defaultdict(list) # {'Apple':[(0,5)]}
-    entityIdx_summary = defaultdict(list)
+    entityIdx_article = [] # [('Apple',0,5)]
+    entityIdx_summary = []
     article_lines = read_text_file(articlefile)
     summary_lines = read_text_file(summaryfile)
     article_lines = [fix_missing_period(line) for line in article_lines]
@@ -67,12 +68,12 @@ def get_article_summary_from_file_and_anonymize(articlefile, summaryfile):
     doc = nlp(article)
     for ent in doc.ents:
         entitySet.add(ent.text)
-        entityIdx_article[ent.text].append((ent.start_char, ent.end_char))
+        entityIdx_article.append((ent.text, ent.start_char, ent.end_char))
     # do the same for summary
     doc = nlp(summary)
     for ent in doc.ents:
         entitySet.add(ent.text)
-        entityIdx_summary[ent.text].append((ent.start_char, ent.end_char))
+        entityIdx_summary.append((ent.text, ent.start_char, ent.end_char))
     entityId = [i for i in range(len(entitySet))]
     random.shuffle(entityId)
     idx_offset_article = 0  # need this because after 1st iter idx will be changed
@@ -80,17 +81,18 @@ def get_article_summary_from_file_and_anonymize(articlefile, summaryfile):
     for i, entity in enumerate(entitySet):
         entitytag = '@entity'+str(entityId[i])
         entityDict[entitytag] = entity
-        # replace this entity in article/summary with entity tag
-        for start_idx, end_idx in entityIdx_article[entity]:
-            start_idx += idx_offset_article
-            end_idx += idx_offset_article
-            article = article[:start_idx] + entitytag + article[end_idx:]
-            idx_offset_article += len(entitytag) - len(entity)
-        for start_idx, end_idx in entityIdx_summary[entity]:
-            start_idx += idx_offset_summary
-            end_idx += idx_offset_summary
-            summary = summary[:start_idx] + entitytag + summary[end_idx:]
-            idx_offset_summary += len(entitytag) - len(entity)
+        entityDict_rev[entity] = entitytag
+    # replace this entity in article/summary with entity tag
+    for entity, start_idx, end_idx in entityIdx_article:
+        start_idx += idx_offset_article
+        end_idx += idx_offset_article
+        article = article[:start_idx] + entityDict_rev[entity] + article[end_idx:]
+        idx_offset_article += len(entityDict_rev[entity]) - len(entity)
+    for entity, start_idx, end_idx in entityIdx_summary:
+        start_idx += idx_offset_summary
+        end_idx += idx_offset_summary
+        summary = summary[:start_idx] + entityDict_rev[entity] + summary[end_idx:]
+        idx_offset_summary += len(entityDict_rev[entity]) - len(entity)
 
     return article.lower(), summary.lower(), entityDict
 
