@@ -155,7 +155,8 @@ def write_to_bin_anonymized(data_type, out_file_rb, out_file_fs):
     # article = get_data_from_file(restbodyfile)
     # article = " ".join(article.strip().split()[:400])
     article, abstract, entityDict = get_article_summary_from_file_and_anonymize(summaryfile=firstsentencefile, articlefile=restbodyfile)
-
+    article = " ".join(article.strip().split()[:400])
+    # write entity dictionary to file
     with open(entityfile, 'w') as file:
         file.write(json.dumps(entityDict))  # use `json.loads` to do the reverse
 
