@@ -89,7 +89,7 @@ def get_article_summary_from_file_and_anonymize(articlefile, summaryfile):
         for start_idx, end_idx in entityIdx_summary[entity]:
             start_idx += idx_offset_summary
             end_idx += idx_offset_summary
-            article = summary[:start_idx] + entitytag + summary[end_idx:]
+            summary = summary[:start_idx] + entitytag + summary[end_idx:]
             idx_offset_summary += len(entitytag) - len(entity)
 
     return article.lower(), summary.lower(), entityDict
