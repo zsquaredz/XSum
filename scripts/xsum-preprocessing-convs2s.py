@@ -3,6 +3,7 @@ import os
 import json
 import spacy
 import random
+from collections import defaultdict
 
 random.seed(2020)
 
@@ -52,8 +53,10 @@ def get_data_from_file(story_file):
   return article
 
 def get_article_summary_from_file_and_anonymize(articlefile, summaryfile):
-    entityDict = {}
+    entityDict = {} # {'@entity1':'Apple'}
     entitySet = set()
+    entityIdx_article = defaultdict(list) # {'Apple':[(0,5)]}
+    entityIdx_summary = defaultdict(list)
     article_lines = read_text_file(articlefile)
     summary_lines = read_text_file(summaryfile)
     article_lines = [fix_missing_period(line) for line in article_lines]
@@ -61,17 +64,33 @@ def get_article_summary_from_file_and_anonymize(articlefile, summaryfile):
     article = ' '.join(article_lines)
     summary = ' '.join(summary_lines)
     # obtain the ent text using spaCy model
-    doc = nlp(article+summary)
+    doc = nlp(article)
     for ent in doc.ents:
         entitySet.add(ent.text)
+        entityIdx_article[ent.text].append((ent.start_char, ent.end_char))
+    # do the same for summary
+    doc = nlp(summary)
+    for ent in doc.ents:
+        entitySet.add(ent.text)
+        entityIdx_summary[ent.text].append((ent.start_char, ent.end_char))
     entityId = [i for i in range(len(entitySet))]
     random.shuffle(entityId)
+    idx_offset_article = 0  # need this because after 1st iter idx will be changed
+    idx_offset_summary = 0
     for i, entity in enumerate(entitySet):
         entitytag = '@entity'+str(entityId[i])
         entityDict[entitytag] = entity
         # replace this entity in article/summary with entity tag
-        article = ' '.join([entitytag if token == entity else token for token in article.split()])
-        summary = ' '.join([entitytag if token == entity else token for token in summary.split()])
+        for start_idx, end_idx in entityIdx_article[entity]:
+            start_idx += idx_offset_article
+            end_idx += idx_offset_article
+            article = article[:start_idx] + entitytag + article[end_idx:]
+            idx_offset_article += len(entitytag) - len(entity)
+        for start_idx, end_idx in entityIdx_summary[entity]:
+            start_idx += idx_offset_summary
+            end_idx += idx_offset_summary
+            article = summary[:start_idx] + entitytag + summary[end_idx:]
+            idx_offset_summary += len(entitytag) - len(entity)
 
     return article.lower(), summary.lower(), entityDict
 
